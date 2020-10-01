@@ -10,11 +10,21 @@ export class SalaryService {
 
   constructor() { }
 
-  getCosts(): Observable<Array<Cost>> {
-    return of(this.costs);
+  get costsFromCache() : Observable<Cost[]>
+  {
+    let cacheCosts = JSON.parse(localStorage.getItem('costs'));
+    
+    if (!cacheCosts) cacheCosts = [];
+
+    return of(cacheCosts);
   }
 
-  costs: Array<Cost> = [  // Add employee object
+  updateCostsInCache(cost:Cost)
+  {
+    let updatedArrayCosts;
+    this.costsFromCache.subscribe(data => updatedArrayCosts = data);
+    updatedArrayCosts.push(cost);
+    localStorage.setItem('costs', JSON.stringify(updatedArrayCosts)); 
+  }
 
-  ];
 }
