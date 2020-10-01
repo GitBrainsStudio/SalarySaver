@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { SalaryService } from './salary.service';
-import { of } from 'rxjs'; // Add import
 import { Cost } from 'src/app/Models/Cost';
+
 
 describe('SalaryService', () => {
   let service: SalaryService;
@@ -15,39 +15,7 @@ describe('SalaryService', () => {
     expect(service).toBeTruthy();
   });
 
-/*   describe('getCosts', () => 
-  {
-    it('метод должен вернуть коллекцию всех расходов', () => {
-      const costResponse = [
-        {
-          Name : "Хлеб",
-          Sum : 31,
-        },
-        {
-          Name : "Молоко",
-          Sum : 39,
-        },
-        {
-          Name : "Яйцо куриное",
-          Sum : 55,
-        }
-      ];
-
-      let response;
-     spyOn(service, 'getCosts').and.returnValue(of(costResponse));
-
-       service.getCosts().subscribe(res => {
-        console.log(res)
-        response = res;
-      }); 
-
-      expect(response).toEqual(costResponse);
-  })
-  });
- */
-
-
-  describe('getCostsFromCache', () => 
+/*   describe('getCostsFromCache', () => 
   {
     it('метод должен вернуть коллекцию расходов из кэша (не нулевую null)', () =>  
     {
@@ -59,33 +27,104 @@ describe('SalaryService', () => {
 
       expect(response).not.toBeNull();
     });
-  })
+  }) */
 
-
-  describe('updateCostsInCache', () => 
+  describe('addCostInCache', () => 
   {
+    
+    var newCost: Cost;
+
+    beforeEach(() => {
+      newCost =  { Guid : service.generateGuid, Name : "Unit Test Object", Sum: 500  }
+    })
+
     it('метод должен добавить новый объект в коллекцию в кэше (local-storage)', () =>
-    {
+    {     
+      
       let costsBeforeAddingObject = Array<Cost>();
       let costsAfterAddingObject = Array<Cost>();
-      let newCost = new Cost();
-      
-      newCost.Name = "Новый объект";
-      newCost.Sum = 331;
-
 
       service.costsFromCache.subscribe(result => costsBeforeAddingObject = result);
 
-      service.updateCostsInCache(newCost);
+      service.addCostInCache(newCost); 
 
       service.costsFromCache.subscribe(result => costsAfterAddingObject = result);
 
       expect(costsAfterAddingObject.length).toBe(costsBeforeAddingObject.length+1);
 
+      expect(costsAfterAddingObject.filter(obj => obj.Guid == newCost.Guid).length).toBe(1);
+
+      expect(() => service.addCostInCache(newCost)).toThrowError("Элемент с данным GUID уже есть в списке");
+
     });
+
+/*     it('метод должен выбросить исключение, если уже такой guid есть в списке объектов', () => 
+      {
+        console.log('я тут')
+        expect(() => service.addCostInCache(newCost)).toThrowError("Элемент с данным GUID уже есть в списке");
+      }) */
+
+    
+    
+
   })
 
+describe('clearAllCostsFromCache', () => 
+  {
+    it('метод должен удалить все расходы из кэша и сделать коллекцию пустой', () => 
+    {
+      let costsAfterClearCache = Array<Cost>();
 
+      service.clearAllCostsFromCache();
+
+      service.costsFromCache.subscribe(result => costsAfterClearCache = result);
+
+      expect(costsAfterClearCache.length).toBe(0); 
+    })
+  })
+
+ describe('deleteCostFromCache', () => 
+  {
+    it('добавляем расход в список, а потом его удаляем', () => 
+    {
+      let arrayBeforeDeleteObject = Array<Cost>();
+      let arrayAfterDeleteObject = Array<Cost>();
+
+
+      let newCost : Cost = { Guid : service.generateGuid, Name : "Unit Test Object", Sum: 500  }
+
+      service.addCostInCache(newCost);
+
+      service.costsFromCache.subscribe(result => arrayBeforeDeleteObject = result);
+      
+      service.deleteCostFromCache(newCost.Guid);
+
+      service.costsFromCache.subscribe(result => arrayAfterDeleteObject = result);
+
+      expect(arrayBeforeDeleteObject.filter(obj => obj.Guid == newCost.Guid).length).toBe(1); 
+      expect(arrayAfterDeleteObject.filter(obj => obj.Guid == newCost.Guid).length).toBe(0); 
+      expect(arrayAfterDeleteObject.length).toBe(arrayBeforeDeleteObject.length-1); 
+    });
+    
+
+    it('метод должен выбросить исключение, если гуид не найден в общем списке', () => 
+    {
+      expect(() => service.deleteCostFromCache('0000-guid-0000')).toThrowError("Элемент с данными GUID не найден");
+    })
+    
+  })
+
+  describe('generateGuid', () => 
+  {
+    it('метод должен сгенерировать гуид', () => 
+    {
+      let response;
+
+      response = service.generateGuid;
+
+      expect(response).not.toBeNull();
+    })
+  })
 });
 
 
