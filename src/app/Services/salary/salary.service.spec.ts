@@ -15,23 +15,8 @@ describe('SalaryService', () => {
     expect(service).toBeTruthy();
   });
 
-/*   describe('getCostsFromCache', () => 
-  {
-    it('метод должен вернуть коллекцию расходов из кэша (не нулевую null)', () =>  
-    {
-      let response; 
-
-      service.costsFromCache.subscribe(res => {
-        response = res;
-      });
-
-      expect(response).not.toBeNull();
-    });
-  }) */
-
   describe('addCostInCache', () => 
   {
-    
     var newCost: Cost;
 
     beforeEach(() => {
@@ -40,8 +25,9 @@ describe('SalaryService', () => {
 
     it('метод должен добавить новый объект в коллекцию в кэше (local-storage)', () =>
     {     
-      
+
       let costsBeforeAddingObject = Array<Cost>();
+
       let costsAfterAddingObject = Array<Cost>();
 
       service.costsFromCache.subscribe(result => costsBeforeAddingObject = result);
@@ -57,19 +43,9 @@ describe('SalaryService', () => {
       expect(() => service.addCostInCache(newCost)).toThrowError("Элемент с данным GUID уже есть в списке");
 
     });
-
-/*     it('метод должен выбросить исключение, если уже такой guid есть в списке объектов', () => 
-      {
-        console.log('я тут')
-        expect(() => service.addCostInCache(newCost)).toThrowError("Элемент с данным GUID уже есть в списке");
-      }) */
-
-    
-    
-
   })
 
-describe('clearAllCostsFromCache', () => 
+  describe('clearAllCostsFromCache', () => 
   {
     it('метод должен удалить все расходы из кэша и сделать коллекцию пустой', () => 
     {
@@ -83,7 +59,7 @@ describe('clearAllCostsFromCache', () =>
     })
   })
 
- describe('deleteCostFromCache', () => 
+  describe('deleteCostFromCache', () => 
   {
     it('добавляем расход в список, а потом его удаляем', () => 
     {
@@ -104,14 +80,9 @@ describe('clearAllCostsFromCache', () =>
       expect(arrayBeforeDeleteObject.filter(obj => obj.Guid == newCost.Guid).length).toBe(1); 
       expect(arrayAfterDeleteObject.filter(obj => obj.Guid == newCost.Guid).length).toBe(0); 
       expect(arrayAfterDeleteObject.length).toBe(arrayBeforeDeleteObject.length-1); 
-    });
-    
-
-    it('метод должен выбросить исключение, если гуид не найден в общем списке', () => 
-    {
       expect(() => service.deleteCostFromCache('0000-guid-0000')).toThrowError("Элемент с данными GUID не найден");
-    })
-    
+    });
+
   })
 
   describe('generateGuid', () => 
