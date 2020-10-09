@@ -1,1 +1,13 @@
 <app-top-navbar></app-top-navbar>
+<main>
+    <div class="container pt-3">
+        <div class="d-flex justify-content-between">
+            <h2>Мои расходы</h2>
+            <fa-icon [icon]="faPlus" (click)="dialogService.consumptionCreatorDialog()"></fa-icon>
+        </div>
+ 
+       
+        <app-consumption-list></app-consumption-list>
+       
+    </div>
+</main>
